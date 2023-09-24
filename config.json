@@ -6,7 +6,9 @@
         "accept_cookies_css": "[data-cc-event='click:dismiss']",
         "google_privacy_css": "[aria-label='Close']",
         "backup_dialog_css": "#note-1 > .close",
-        "cookie_css": "",
-        "upgrade_button_css": ""
+        "cookie_id": "bigCookie",
+        "cookie_score_id": "cookies",
+        "product_ids": ["product0", "product1", "product2", "product3", "product4"],
+        "price_ids": ["productPrice0", "productPrice1", "productPrice2", "productPrice3", "productPrice4"]
     }
 }

@@ -5,6 +5,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
+from selenium.common.exceptions import TimeoutException
 
 
 class CookieClickerBot:
@@ -18,8 +19,10 @@ class CookieClickerBot:
         self.__accept_cookies_css = self.__config["selectors"]["accept_cookies_css"]
         self.__google_privacy_css = self.__config["selectors"]["google_privacy_css"]
         self.__backup_dialog_css = self.__config["selectors"]["backup_dialog_css"]
-        self.__cookie_css = self.__config["selectors"]["cookie_css"]
-        self.__upgrade_button_css = self.__config["selectors"]["upgrade_button_css"]
+        self.__cookie_id = self.__config["selectors"]["cookie_id"]
+        self.__cookie_score_id = self.__config["selectors"]["cookie_score_id"]
+        self.__product_ids = self.__config["selectors"]["product_ids"]
+        self.__price_ids = self.__config["selectors"]["price_ids"]
 
         self.LOCATOR_MAP = {
             "class": By.CLASS_NAME,
@@ -59,6 +62,38 @@ class CookieClickerBot:
         button.click()
         return
 
+    def __get_text(self, locator_value, locator_type="css", wait_seconds=10):
+        by_locator = self.LOCATOR_MAP.get(locator_type, By.CSS_SELECTOR)
+        try:
+            text = (
+                WebDriverWait(self.__driver, wait_seconds)
+                .until(EC.presence_of_element_located((by_locator, locator_value)))
+                .text
+            )
+            return text
+        except TimeoutException:
+            return None
+
+    def __parse_int(self, score_text):
+        if score_text != None:
+            return int(score_text.split(" ")[0].replace(",", ""))
+        return None
+
+    def __get_int(self, locator, locator_type):
+        text = self.__get_text(locator, locator_type=locator_type)
+        return self.__parse_int(text)
+
+    def __get_prices(self):
+        prices = []
+        for price in self.__price_ids:
+            prices.append(self.__get_int(price, "id"))
+        print(prices)
+
+    # def __buy_upgrade(self):
+    #     score = self.__get_int()
+    #     if score % 100 == 0 and score > 100:
+    #         self.__click_button(self.__grandma_id, locator_type="id")
+
     def __consent_gdpr(self):
         self.__click_button(self.__consent_button_css)
 
@@ -75,10 +110,7 @@ class CookieClickerBot:
         self.__click_button(self.__backup_dialog_css)
 
     def __click_cookie(self):
-        pass
-
-    def __buy_upgrade(self):
-        pass
+        self.__click_button(self.__cookie_id, locator_type="id")
 
     def __setup(self):
         self.__get_webpage()
@@ -91,8 +123,8 @@ class CookieClickerBot:
     def __game_loop(self):
         while True:
             self.__click_cookie()
-            self.__buy_upgrade()
+            self.__get_prices()
 
     def run(self):
         self.__setup()
-        # self.__game_loop()
+        self.__game_loop()
