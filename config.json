@@ -3,6 +3,7 @@
     "selectors": {
         "consent_button_css": ".fc-button.fc-cta-consent.fc-primary-button",
         "english_button_id": "langSelect-EN",
+        "accept_cookies_css": ".cc_btn_accept_all",
         "cookie_css": "",
         "upgrade_button_css": ""
     }

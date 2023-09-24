@@ -15,8 +15,20 @@ class CookieClickerBot:
         self.__url = self.__config["url"]
         self.__consent_button_css = self.__config["selectors"]["consent_button_css"]
         self.__english_button_id = self.__config["selectors"]["english_button_id"]
+        self.__accept_cookies_css = self.__config["selectors"]["accept_cookies_css"]
         self.__cookie_css = self.__config["selectors"]["cookie_css"]
         self.__upgrade_button_css = self.__config["selectors"]["upgrade_button_css"]
+
+        self.LOCATOR_MAP = {
+            "class": By.CLASS_NAME,
+            "css": By.CSS_SELECTOR,
+            "id": By.ID,
+            "link": By.LINK_TEXT,
+            "name": By.NAME,
+            "partial-link": By.PARTIAL_LINK_TEXT,
+            "tag": By.TAG_NAME,
+            "xpath": By.XPATH,
+        }
 
         self.__driver = self.__initialize_driver()
         self.__timer = time.time()
@@ -29,30 +41,30 @@ class CookieClickerBot:
     def __get_webpage(self):
         self.__driver.get(self.__url)
 
-    def __click_button(self, locator_value, locator_type="css", wait_seconds=10):
-        locator_map = {
-            "class": By.CLASS_NAME,
-            "css": By.CSS_SELECTOR,
-            "id": By.ID,
-            "link": By.LINK_TEXT,
-            "name": By.NAME,
-            "partial-link": By.PARTIAL_LINK_TEXT,
-            "tag": By.TAG_NAME,
-            "xpath": By.XPATH,
-        }
-
-        by_locator = locator_map.get(locator_type, By.CSS_SELECTOR)
+    def __click_button(
+        self, locator_value, locator_type="css", wait_seconds=10, javascript=False
+    ):
+        by_locator = self.LOCATOR_MAP.get(locator_type, By.CSS_SELECTOR)
 
         button = WebDriverWait(self.__driver, wait_seconds).until(
             EC.element_to_be_clickable((by_locator, locator_value))
         )
+
+        if javascript:
+            self.__driver.execute_script("arguments[0].click();", button)
+            return
+
         button.click()
+        return
 
     def __consent_gdpr(self):
         self.__click_button(self.__consent_button_css)
 
     def __select_english(self):
         self.__click_button(self.__english_button_id, locator_type="id")
+
+    def __accept_cookies(self):
+        self.__click_button(self.__accept_cookies_css, javascript=True)
 
     def __click_cookie(self):
         pass
@@ -68,5 +80,6 @@ class CookieClickerBot:
     def run(self):
         self.__get_webpage()
         self.__consent_gdpr()
-        # self.__select_english()
+        self.__select_english()
+        self.__accept_cookies()
         # self.__game_loop()
