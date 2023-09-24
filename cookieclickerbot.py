@@ -13,6 +13,11 @@ class CookieClickerBot:
             self.__config = json.load(file)
 
         self.__url = self.__config["url"]
+        self.__consent_button_css = self.__config["selectors"]["consent_button_css"]
+        self.__english_button_id = self.__config["selectors"]["english_button_id"]
+        self.__cookie_css = self.__config["selectors"]["cookie_css"]
+        self.__upgrade_button_css = self.__config["selectors"]["upgrade_button_css"]
+
         self.__driver = self.__initialize_driver()
         self.__timer = time.time()
 
@@ -24,58 +29,36 @@ class CookieClickerBot:
     def __get_webpage(self):
         self.__driver.get(self.__url)
 
-    def __click_button_with_xpath(self, xpath):
-        button = WebDriverWait(self.__driver, 30).until(
-            EC.presence_of_element_located((By.XPATH, xpath))
-        )
-        button.click()
+    def __click_button(self, locator_value, locator_type="css", wait_seconds=10):
+        locator_map = {
+            "class": By.CLASS_NAME,
+            "css": By.CSS_SELECTOR,
+            "id": By.ID,
+            "link": By.LINK_TEXT,
+            "name": By.NAME,
+            "partial-link": By.PARTIAL_LINK_TEXT,
+            "tag": By.TAG_NAME,
+            "xpath": By.XPATH,
+        }
 
-    def __click_button_with_id(self, id):
-        button = WebDriverWait(self.__driver, 30).until(
-            EC.element_to_be_clickable((By.ID, id))
-        )
-        button.click()
+        by_locator = locator_map.get(locator_type, By.CSS_SELECTOR)
 
-    def __instant_click_button_with_class_name(self, class_name):
-        button = self.__driver.find_element(By.CLASS_NAME, class_name)
+        button = WebDriverWait(self.__driver, wait_seconds).until(
+            EC.element_to_be_clickable((by_locator, locator_value))
+        )
         button.click()
 
     def __consent_gdpr(self):
-        button = WebDriverWait(self._driver, 30).until(
-            EC.element_to_be_clickable((By.CLASS_NAME,))
-        )
-        self.__instant_click_button_with_class_name(
-            "fc-button fc-cta-consent fc-primary-button"
-        )
+        self.__click_button(self.__consent_button_css)
 
     def __select_english(self):
-        self.__click_button_with_xpath(
-            "/html/body/div[2]/div[2]/div[12]/div/div[1]/div[1]/div[2]"
-        )
-        # Wait for the page to reload
-        WebDriverWait(self.__driver, 30).until(
-            EC.presence_of_element_located((By.ID, "bigCookie"))
-        )
+        self.__click_button(self.__english_button_id, locator_type="id")
 
     def __click_cookie(self):
-        cookie = WebDriverWait(self.__driver, 30).until(
-            EC.presence_of_element_located((By.ID, "bigCookie"))
-        )
-        self.__driver.execute_script("arguments[0].click();", cookie)
+        pass
 
     def __buy_upgrade(self):
-        current_time = time.time()
-        if (
-            current_time - self.__timer >= 5
-        ):  # I changed it from 5000 to 5 for 5 seconds
-            try:
-                print("Got to it!")
-                self.instant_click_button_with_class_name("product unlocked enabled")
-                print("Found it!")
-                self.__timer = current_time
-            except:
-                print("Waiting...")
-                pass
+        pass
 
     def __game_loop(self):
         while True:
@@ -84,6 +67,6 @@ class CookieClickerBot:
 
     def run(self):
         self.__get_webpage()
-        # self.__consent_gdpr()
+        self.__consent_gdpr()
         # self.__select_english()
         # self.__game_loop()
