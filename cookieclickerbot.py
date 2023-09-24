@@ -16,6 +16,8 @@ class CookieClickerBot:
         self.__consent_button_css = self.__config["selectors"]["consent_button_css"]
         self.__english_button_id = self.__config["selectors"]["english_button_id"]
         self.__accept_cookies_css = self.__config["selectors"]["accept_cookies_css"]
+        self.__google_privacy_css = self.__config["selectors"]["google_privacy_css"]
+        self.__backup_dialog_css = self.__config["selectors"]["backup_dialog_css"]
         self.__cookie_css = self.__config["selectors"]["cookie_css"]
         self.__upgrade_button_css = self.__config["selectors"]["upgrade_button_css"]
 
@@ -64,7 +66,13 @@ class CookieClickerBot:
         self.__click_button(self.__english_button_id, locator_type="id")
 
     def __accept_cookies(self):
-        self.__click_button(self.__accept_cookies_css, javascript=True)
+        self.__click_button(self.__accept_cookies_css, javascript=True, wait_seconds=20)
+
+    def __dismiss_google_privacy(self):
+        self.__click_button(self.__google_privacy_css, wait_seconds=20)
+
+    def __dismiss_backup_dialog(self):
+        self.__click_button(self.__backup_dialog_css)
 
     def __click_cookie(self):
         pass
@@ -72,14 +80,19 @@ class CookieClickerBot:
     def __buy_upgrade(self):
         pass
 
+    def __setup(self):
+        self.__get_webpage()
+        self.__consent_gdpr()
+        self.__select_english()
+        self.__accept_cookies()
+        self.__dismiss_google_privacy()
+        self.__dismiss_backup_dialog()
+
     def __game_loop(self):
         while True:
             self.__click_cookie()
             self.__buy_upgrade()
 
     def run(self):
-        self.__get_webpage()
-        self.__consent_gdpr()
-        self.__select_english()
-        self.__accept_cookies()
+        self.__setup()
         # self.__game_loop()

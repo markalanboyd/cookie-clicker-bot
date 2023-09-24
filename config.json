@@ -3,7 +3,9 @@
     "selectors": {
         "consent_button_css": ".fc-button.fc-cta-consent.fc-primary-button",
         "english_button_id": "langSelect-EN",
-        "accept_cookies_css": ".cc_btn_accept_all",
+        "accept_cookies_css": "[data-cc-event='click:dismiss']",
+        "google_privacy_css": "[aria-label='Close']",
+        "backup_dialog_css": "#note-1 > .close",
         "cookie_css": "",
         "upgrade_button_css": ""
     }
