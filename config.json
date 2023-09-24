@@ -1,0 +1,9 @@
+{
+    "url": "https://orteil.dashnet.org/cookieclicker/",
+    "selectors": {
+        "consent_button_class": "",
+        "english_button_class": "",
+        "cookie_class": "",
+        "upgrade_button_class": ""
+    }
+}
