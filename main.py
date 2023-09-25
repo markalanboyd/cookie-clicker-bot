@@ -1,9 +1,8 @@
-from cookieclickerbot import CookieClickerBot
+from cookie_clicker_bot import CookieClickerBot
 
 
 def main():
-    bot = CookieClickerBot()
-    bot.run()
+    CookieClickerBot().run()
 
 
 if __name__ == "__main__":
